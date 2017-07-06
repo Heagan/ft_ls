@@ -24,6 +24,7 @@ void		addentry(t_list **list, char *entry, char *directory, int spaces)
 	
 	temp = (t_list*)malloc(sizeof(t_list));
 	temp->next = NULL;
+	temp->branch = NULL;
 	temp->dir = directory;
 	temp->data = entry;
 
@@ -39,16 +40,30 @@ void		addentry(t_list **list, char *entry, char *directory, int spaces)
 
 void		ft_printlist(t_list *list, t_info *a)
 {
+	/*
 	if (ft_strchr(a->arg, 'r') != NULL)
 		ft_lstsort(list, 'r');
 	else if (ft_strchr(a->arg, 't') != NULL)
 		ft_lstsort(list, 't');
 	else
 		ft_lstsort(list, 'a');
+	*/
+	t_list *start;
+
+	start = list;	
 	while (list)
 	{
-		//puts((list->dir));
-		printf("%*s%s ---- %i\n", (int)ft_strlen(list->dir), "", list->data, (int)ft_strlen(list->dir));
+			//puts((list->dir));
+			//printf("%*s%s\n", (int)ft_strlen(list->dir), "", list->data);//, (int)ft_strlen(list->dir));
+		//	printf("%s/%s\n", list->dir, list->data);//, (int)ft_strlen(list->dir));
+			list = list->next;
+	}
+	puts("");
+	list = start;
+	while (list)
+	{
+		if (list->branch != NULL)
+		//	ft_printlist(list->branch, a);
 		list = list->next;
 	}
 }
@@ -78,7 +93,8 @@ void		ft_filllist(char *dir, int depth, t_info *a, t_list **list)
 				addentry(list, entry->d_name, direc, spaces);
 				if (ft_strchr(a->arg, 'R') != NULL && entry->d_name[0] != '.' && ft_isdir(0, direc))
 				{
-					ft_filllist(direc, depth+1, a, list);
+					puts(entry->d_name);	
+					ft_filllist(direc, depth+1, a, list);//&(*list)->branch);
 				}
 			}
 			else
@@ -88,7 +104,6 @@ void		ft_filllist(char *dir, int depth, t_info *a, t_list **list)
 		}
 	}
 	closedir(dp);
-	ft_printlist(*list, a);
 }
 
 int			main(int ac, char **av)
@@ -96,6 +111,8 @@ int			main(int ac, char **av)
 	int		i;
 	t_info	a;
 	t_list	*list;
+
+	puts("_________________________________START______________________________\n");
 
 	a.arg =	ft_strnew(100);
 	a.line = ft_strnew(50);
@@ -123,5 +140,6 @@ int			main(int ac, char **av)
 		}
 	}
 	ft_filllist(a.line, 0 , &a, &list);
+	ft_printlist(list, &a);
 	return (0);
 }

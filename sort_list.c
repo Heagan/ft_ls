@@ -44,23 +44,19 @@ void	ft_lstsort(t_list *lst, char arg)
 		newsize = 0;
 		while (i < size)
 		{
-			c_dir = l->dir;
-			while (l->next)
-			{
-				if (arg == 'a')
-					if (ft_strcmp(l->data, l->next->data) > 0)
-					{
-						ft_lstswap(l, l->next);
-						newsize = i;
-					}
-				if (arg == 'r')
-					if (ft_strcmp(l->data, l->next->data) < 0)
-					{
-						ft_lstswap(l, l->next);
-						newsize = i;
-					}
-				l = l->next;
-			}
+			if (arg == 'a')
+				if (ft_strcmp(l->dir, l->next->dir) > 0)
+				{
+					ft_lstswap(l, l->next);
+					newsize = i;
+				}
+			if (arg == 'r')
+				if (ft_strcmp(l->dir, l->next->dir) < 0)
+				{
+					ft_lstswap(l, l->next);
+					newsize = i;
+				}
+			l = l->next;
 			i++;
 		}
 		size = newsize;

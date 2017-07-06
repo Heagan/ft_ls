@@ -13,7 +13,7 @@
 
 static void my_print(const char *name, const struct stat *info)
 {
-	/* TODO: Better output; use info too, for 'ls -l' -style output? */
+	/* Better output; use info too, for 'ls -l' -style output? */
 	printf("%s\n", name);
 }
 
@@ -35,7 +35,8 @@ static int my_ls(const char *dir)
 	int             size, i, fd;
 
 	size = scandir(dir, &list, my_filter, alphasort);
-	if (size == -1) {
+	if (size == -1) 
+	{
 		const int cause = errno;
 
 		/* Is dir not a directory, but a single entry perhaps? */

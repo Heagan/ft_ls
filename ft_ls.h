@@ -30,6 +30,7 @@ typedef struct		s_list
 {
 	char			*data;
 	char			*dir;
+	struct s_list	*branch;
 	struct s_list	*next;
 }					t_list;
 
