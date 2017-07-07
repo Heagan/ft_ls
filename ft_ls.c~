@@ -14,7 +14,7 @@ int			ft_isdir(int n, char *dir)
 	return (0);
 }
 
-void		addentry(t_list **list, char *entry, char *directory, int spaces, t_list *branch)
+void		addentry(t_list **list, char *entry, char *directory, int spaces)
 {
 	t_list *temp;
 	t_list *end;
@@ -24,14 +24,12 @@ void		addentry(t_list **list, char *entry, char *directory, int spaces, t_list *
 	
 	temp = (t_list*)malloc(sizeof(t_list));
 	temp->next = NULL;
-	temp->branch = NULL; 
+	temp->branch = NULL;
 	temp->dir = directory;
 	temp->data = entry;
-	
+
 	if ((*list) == NULL)
-	{
 		*list = temp;
-	}
 	else
 	{
 		while(current->next)
@@ -78,7 +76,7 @@ void		ft_filllist(char *dir, int depth, t_info *a, t_list **list)
 	struct	dirent *entry;
 	static struct	stat statbuf;
 	int		spaces = depth * 4;
-	char	*direc = NULL;
+	char	*direc;
 
 	if((dp = opendir(dir)) == NULL)
 	{
@@ -92,28 +90,33 @@ void		ft_filllist(char *dir, int depth, t_info *a, t_list **list)
 			lstat(entry->d_name, &statbuf); //fills statbuf like mode
 			if (ft_isdir(statbuf.st_mode, NULL))
 			{
-				if (direc == NULL && ft_strlen(dir) > 1)
+				direc = dir;
+				if ((*list)->dir == direc)
 				{
-					direc = dir;
-					*list = malloc(sizeof(t_list));
-					(*list)->branch = malloc(sizeof(t_list));
-					addentry(list, entry->d_name, direc, spaces, (*list)->branch);
-					*list = (*list)->branch;
+					puts("T");
+					addentry(list, entry->d_name, direc, spaces);
+					puts("T");
 				}
 				else
 				{
-					direc = dir;
-					addentry(list, entry->d_name, direc, spaces, NULL);
+					puts("T");
+					addentry(&(*list)->branch, entry->d_name, direc, spaces);
+					puts("I");
+					*list = (*list)->branch;
+					puts("A");
 				}
+					puts("A");
 				direc = ft_strjoin(ft_strjoin(direc, "/"), entry->d_name);
+					puts("A");
 				if (ft_strchr(a->arg, 'R') != NULL && entry->d_name[0] != '.' && ft_isdir(0, direc))
 				{
 					ft_filllist(direc, depth+1, a, &(*list)->branch);
 				}
+					puts("A");
 			}
 			else
 			{
-				addentry(list, entry->d_name, dir, spaces, NULL);
+				addentry(list, entry->d_name, dir, spaces);
 			}
 		}
 	}
