@@ -1,6 +1,6 @@
-#include "ft_ls.h"
+#include "lslib.h"
 
-size_t	ft_lstsize(const t_list *lst)
+const size_t	ft_lstsize(const t_lst *lst)
 {
 	size_t	size;
 
@@ -13,7 +13,7 @@ size_t	ft_lstsize(const t_list *lst)
 	return (size);
 }
 
-static	void	ft_lstswap(t_list *lst, t_list *mst)
+static	void	ft_lstswap(t_lst *lst, t_lst *mst)
 {
 	const void	*tmp;
 	const void	*tmpd;
@@ -26,39 +26,47 @@ static	void	ft_lstswap(t_list *lst, t_list *mst)
 	mst->dir = (void *)tmpd;
 }
 
-
-void	ft_lstsort(t_list *lst, char arg)
+int				lstcmp_asending(t_lst *l1, t_lst *l2)
 {
-	size_t	i;
-	t_list	*l;
-	size_t	size;
-	size_t	newsize;
-	char	*c_dir;
+	if (ft_strcmp(l1->data, l2->data) < 0)
+		return (0);
+	return (1);
+}
 
-	size = ft_lstsize(lst);
-	newsize = size;
-	while (newsize)
+int				lstcmp_desending(t_lst *l1, t_lst *l2)
+{
+	if (ft_strcmp(l1->data, l2->data) > 0)
+		return (0);
+	return (1);
+}
+
+void			ft_lstsort(const t_lst *list, char *arg)
+{
+	t_lst		*head;
+	int			b;
+
+	b = 1;
+	while (b)
 	{
-		i = 1;
-		l = lst;
-		newsize = 0;
-		while (i < size)
+		b = 0;
+		head = (t_lst *)list;
+		while (head->next)
 		{
-			if (arg == 'a')
-				if (ft_strcmp(l->dir, l->next->dir) > 0)
+			if (ft_strchr(arg, 'r') == NULL)
+			{
+				if (lstcmp_asending(head, head->next))
 				{
-					ft_lstswap(l, l->next);
-					newsize = i;
+					ft_lstswap(head, head->next);
+					b = 1;
 				}
-			if (arg == 'r')
-				if (ft_strcmp(l->dir, l->next->dir) < 0)
-				{
-					ft_lstswap(l, l->next);
-					newsize = i;
-				}
-			l = l->next;
-			i++;
+			}
+			else
+			if (lstcmp_desending(head, head->next))
+			{
+				ft_lstswap(head, head->next);
+				b = 1;
+			}
+			head = head->next;
 		}
-		size = newsize;
 	}
 }
