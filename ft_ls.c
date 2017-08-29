@@ -1,123 +1,120 @@
 #include "lslib.h"
 
+
 int						ft_isdir(int n, char *dir)
 {
+	DIR		*dp;
+
 	if (n > 0)
 		return (n >= 040000 && n <= 040777);
 	if (dir != NULL)
 	{
-		if (opendir(dir) != NULL)
+		if ((dp = opendir(dir)) != NULL)
+		{
+			closedir(dp);
 			return (1);
+		}
 		else
+		{
+			closedir(dp);
 			return (0);
+		}
 	}
 	return (0);
 }
 
-void					addentry(t_lst **list, char *entry, char *directory)
+void					addentry(t_lst **list, char *name, char *directory)
 {
 	t_lst 				*temp;
 	t_lst 				*current;
 
+	
 	current = *list;
 
 	temp = (t_lst *)malloc(sizeof(t_lst));
-	temp->next = NULL;
-	temp->branch = NULL; 
-	temp->dir = directory;
-	temp->data = entry;
+	temp->next = NULL; 
+	temp->dir = ft_strjoin(directory, "/");
+	temp->name = ft_strdup(name);
 	
-	if (*list == NULL) /* is this the first element in the lst */
-		*list = temp;	/*set temp as the beginning of the list */
+	if (*list == NULL)
+		*list = temp;
 	else
 	{
-		while(current->next) /* go to the end */
+		while(current->next)
 			current = current->next;
-		current->next = temp; /* add temp to the end */
+		current->next = temp;
 	}
 }
 
-void					ft_printlist(const t_lst *list, t_info *a)
+void	ft_getinfo(char *entry, t_stat *statbuf)
 {
-	t_lst				*start;
-
-	start = (t_lst *)list;
-	if (start)
-		if (start->dir != NULL)
-			if (ft_strstr(start->dir, "./") != NULL)
-				ft_printf(2, start->dir, "/");
-	while (start)
-	{
-		ft_putstr(start->data);
-		ft_putstr("\n");
-		start = start->next;
-	}
-	puts("");
-	start = (t_lst *)list;
-	while (start)
-	{
-		if (start->branch != NULL)
-			ft_printlist(start->branch, a);
-		start = start->next;
-	}
+	lstat(entry, statbuf);
+	if 
+	printf("%i HELLO\n", statbuf->st_size);
 }
 
-void					ft_filllist(char *dir, int depth, t_info *a, t_lst **list)
+void					ft_read_curdir(char *dir, t_info *a, t_dir *info)
 {
-	DIR					*dp;
-	struct dirent 		*entry;
-	static struct stat	statbuf;
-	int					spaces;
-	char				*direc;
+	t_lst	*tmp = NULL;
+	t_lst	*list = NULL;
+	char	*rec[255];
+	char	*s;
+	int		i;
+	int		j;
 
-	direc = NULL;
-	spaces = depth * 4;
-	if((dp = opendir(dir)) == NULL)
+	i = 0;	
+	if ((info->dp = opendir(dir)) == NULL)
 	{
-		fprintf(stderr,"cannot open directory: %s\n", dir);
-		return;
+		printf("Cant open dir %s\n", dir);
+		return ;
 	}
-
-	while ((entry = readdir(dp)) != NULL) /* read contents */
-	{
-		puts(entry->d_name);
-		if (entry->d_name[0] != '.' || ft_strchr(a->arg, 'a') != NULL) /* if we not doing all the files 'a' */
-		{	
-			lstat(entry->d_name, &statbuf); /* Save info */
-			if (ft_isdir(statbuf.st_mode, NULL)) /* is dir? num test */
-			{
-				if (direc == NULL && ft_strlen(dir) > 1) /* has direc been set? */
-				{
-					direc = dir; /* set to current dir */
-					addentry(list, entry->d_name, direc); /* add file name to list */
-					*list = (*list)->branch; /* start adding stuff now onto the branch */
-				}
-				else
-				{
-					direc = dir; /* set to current dir <look at if statment>*/
-					addentry(list, entry->d_name, direc); /* add file name to lst */
-				}
-				direc = ft_strjoin(ft_strjoin(direc, "/"), entry->d_name); /* either make the dir deeper or add the file name */
-				if (ft_strchr(a->arg, 'R') && entry->d_name[0] != '.' && ft_isdir(0, direc))
-					ft_filllist(direc, depth + 1, a, &(*list)->branch); /* RECURSE!! add onto the branch thou*/
-			}
-			else
-				addentry(list, entry->d_name, dir); /* if not a dir just add the name to list */ 
+	
+	while ((info->entry = readdir(info->dp)) != NULL)
+		if (info->entry->d_name[0] != '.' || ft_strchr(a->arg, 'a') != NULL)
+		{
+			ft_getinfo(info->entry->d_name, &info->statbuf);
+			addentry(&list, info->entry->d_name, dir);
 		}
+	ft_lstsort(&list, a->arg);
+	tmp = list;
+	while (tmp)
+	{
+		puts(tmp->name);
+		s = ft_strjoin(tmp->dir, tmp->name);
+		if (ft_isdir(0, s) && tmp->name[0] != '.')
+		{
+			rec[i] = s;
+			i++;
+		}
+		tmp = tmp->next;
 	}
-	ft_lstsort(*list, a->arg);
-	closedir(dp);
+	closedir(info->dp);
+
+	
+
+	puts("");
+	j = -1;
+	if (i > 0)
+		if (ft_strchr(a->arg, 'R') != NULL)
+			while (++j < i)
+			{
+				printf("%s\n", rec[j]);
+				ft_read_curdir(rec[j], a, info);
+			}
 }
+
 
 int					main(int ac, char **av)
 {
 	int				i;
 	t_info			a;
-	t_lst			*list;
+	t_lst			*list = NULL;
+	t_lst			*tmp;
+	t_dir			dir_info;
 
 	a.arg =	ft_strnew(100);
 	a.line = ft_strnew(50);
-	a.line[0] = '.'; /* set current path */
+	a.line[0] = '.';
 	if (ac > 1)
 	{
 		i = -1;
@@ -140,7 +137,6 @@ int					main(int ac, char **av)
 				a.line = av[i];
 		}
 	}
-	ft_filllist(a.line, 0 , &a, &list);
-	ft_printlist(list, &a);
+	ft_read_curdir(a.line, &a,  &dir_info);
 	return (0);
 }

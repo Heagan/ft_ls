@@ -11,29 +11,40 @@
 
 # include "libft.h"
 
+typedef struct dirent	t_dirt;
+typedef struct stat		t_stat;
+
 typedef struct		s_line_info 
 {
 	char			*line;
 	char			*arg;
 
 }					t_info;
-
+/*
 typedef struct		s_directory
 {
 	char			*name;
 	char			*dir;
 	int				*spaces;
 	
+}					t_dir;*/
+
+typedef struct		s_directory
+{
+	DIR				*dp;
+	t_dirt		 	*entry;
+	t_stat			statbuf;
 }					t_dir;
 
 typedef struct		s_lst
 {
-	char			*data;
+	char			*name;
 	char			*dir;
-	struct s_lst	*branch;
+	t_dirt		 	*entry;
 	struct s_lst	*next;
 }					t_lst;
 
-void	ft_lstsort(const t_lst *list, char *arg);
+void	ft_lstsort(t_lst **list, char *arg);
+int		ft_strccmp(const char *s1, const char *s2);
 
 #endif

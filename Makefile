@@ -14,6 +14,7 @@ NAME = zpp
 
 SRC = ft_ls.c \
 	  sort_list.c \
+	  ft_strccmp.c \
 	  ft_printf.c
 
 LIB = -L ./libft -lft

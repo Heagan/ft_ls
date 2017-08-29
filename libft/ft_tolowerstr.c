@@ -18,9 +18,10 @@ char		*ft_tolowerstr(char *c)
 	char	*str;
 
 	i = -1;
-	str = ft_strnew(ft_strlen(c));
+
+	str = ft_strdup(c);
 	while (++i <= (int)ft_strlen(c))
 		if ('A' <= c[i] && c[i] <= 'Z')
-			str[i] = (c[i] + 32);
+			str[i] = c[i] + 32;
 	return (str);
 }
