@@ -6,7 +6,7 @@
 /*   By: gsferopo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 16:24:36 by gsferopo          #+#    #+#             */
-/*   Updated: 2017/08/21 13:23:27 by gsferopo         ###   ########.fr       */
+/*   Updated: 2017/08/30 12:07:40 by gsferopo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ typedef struct		s_list
 }					t_list;
 
 void				ft_printf(int num, ...);
+char				*ft_itoa_base(int value, int base);
 
 char				*ft_hex(int n);
 int					ft_clamp(int min, int max, int n);
@@ -69,6 +70,7 @@ int					ft_isascii(int c);
 int					ft_isprint(int c);
 int					ft_toupper(int c);
 int					ft_tolower(int c);
+char				*ft_tolowerstr(char *c);
 
 void				*ft_memalloc(size_t size);
 void				ft_memdel(void **ap);

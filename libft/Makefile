@@ -6,7 +6,7 @@
 #    By: gsferopo <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/07/20 12:06:34 by gsferopo          #+#    #+#              #
-#    Updated: 2017/08/21 13:23:45 by gsferopo         ###   ########.fr        #
+#    Updated: 2017/08/30 12:08:00 by gsferopo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ SRC1	=	ft_hex.c		\
 			ft_tolowerstr.c	\
 			ft_issdigit.c	\
 			ft_strnsplit.c	\
+			ft_itoa_base.c	\
 			ft_printf.c
 
 SRC2	=	ft_lstnew.c		\

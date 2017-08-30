@@ -20,14 +20,6 @@ typedef struct		s_line_info
 	char			*arg;
 
 }					t_info;
-/*
-typedef struct		s_directory
-{
-	char			*name;
-	char			*dir;
-	int				*spaces;
-	
-}					t_dir;*/
 
 typedef struct		s_directory
 {
@@ -40,6 +32,7 @@ typedef struct		s_lst
 {
 	char			*name;
 	char			*dir;
+	char			*perm;
 	t_dirt		 	*entry;
 	struct s_lst	*next;
 }					t_lst;

@@ -17,25 +17,29 @@ static	void	ft_lstswap(t_lst *lst, t_lst *mst)
 {
 	const void	*tmp;
 	const void	*tmpd;
+	const void	*tmpp;
 
 	tmp = lst->name;
+	tmpp = lst->perm;
 	tmpd = lst->dir;
 	lst->name = mst->name;
 	lst->dir = mst->dir;
+	lst->perm = mst->perm;
 	mst->name = (void *)tmp;
 	mst->dir = (void *)tmpd;
+	mst->perm = (void *)tmpp;
 }
 
 int				lstcmp_asending(t_lst *l1, t_lst *l2)
 {
-	if (ft_strccmp(l1->name, l2->name) < 0)
+	if (ft_strcmp(l1->name, l2->name) < 0)
 		return (0);
 	return (1);
 }
 
 int				lstcmp_desending(t_lst *l1, t_lst *l2)
 {
-	if (ft_strccmp(l1->name, l2->name) > 0)
+	if (ft_strcmp(l1->name, l2->name) > 0)
 		return (0);
 	return (1);
 }

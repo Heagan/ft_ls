@@ -6,7 +6,7 @@
 #    By: gsferopo <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/08/21 11:43:10 by gsferopo          #+#    #+#              #
-#    Updated: 2017/08/28 10:47:58 by gsferopo         ###   ########.fr        #
+#    Updated: 2017/08/30 09:52:55 by gsferopo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ SRC = ft_ls.c \
 	  ft_strccmp.c \
 	  ft_printf.c
 
-LIB = -L ./libft -lft
+LIB = -L ./libft -lft -I. -I./libft
 
 all:
 	gcc -o $(NAME) $(SRC) $(LIB)
