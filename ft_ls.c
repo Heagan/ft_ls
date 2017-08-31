@@ -1,4 +1,7 @@
 #include "lslib.h"
+#include <pwd.h>
+#include <grp.h>
+#include <time.h>
 
 int						ft_islink(int n)
 {
@@ -24,7 +27,7 @@ int						ft_isdir(int n, char *dir)
 	return (0);
 }
 
-void					addentry(t_lst **list, char *name, char *directory, char *perm)
+void					addentry(t_lst **list, t_dir *info, char *directory, char *perm)
 {
 	t_lst 				*temp;
 	t_lst 				*current;
@@ -35,7 +38,8 @@ void					addentry(t_lst **list, char *name, char *directory, char *perm)
 	temp = (t_lst *)malloc(sizeof(t_lst));
 	temp->next = NULL; 
 	temp->dir = ft_strjoin(directory, "/");
-	temp->name = ft_strdup(name);
+	temp->name = ft_strdup(info->entry->d_name);
+	temp->time = info->statbuf.st_mtime;
 	temp->perm = ft_strdup(perm);
 	
 	if (*list == NULL)
@@ -93,20 +97,97 @@ char					*fileperm(int n)
 	return(s);
 }
 
-char		*ft_getinfo(char *entry, t_stat *statbuf, char *dir, t_dir *info)
+char				*get_uid(int uid)
 {
-	char	*perm;
-	char	*tmp;
+	struct passwd	*pwd;
 
-	lstat(entry, statbuf);
-	perm = ft_strnew(10);
-	bzero(perm, 10);
-	
-	dir = ft_strjoin(ft_strjoin(dir, "/"), entry);
+	if ((pwd = getpwuid(uid)) != NULL)
+        return(pwd->pw_name);
+    else
+        return(ft_itoa(uid));
+}
+
+char				*get_gid(int gid)
+{
+	struct group   *grp;
+
+	if ((grp = getgrgid(gid)) != NULL)
+    	return (grp->gr_name);
+    else
+    	return (NULL);
+}
+
+char				*get_time(time_t rawtime)
+{
+	struct tm		*timeinfo;
+	char			buffer[80];
+
+	timeinfo = localtime (&rawtime);
+	strftime (buffer, 80, "%b %d %R",timeinfo);
+	return (ft_strdup(buffer));
+}
+
+char		*get_tabs(t_dir *info, int len)
+{
+	int		i;
+	char	*s;
+
+	s = ft_strnew(1);
+	s[0] = ' ';
+	i = 0;
+	while (i < info->len - len + 1)
+	{
+		s = ft_strjoin(s, " ");
+		i += 1;
+	}
+	if (len == 100)
+	{
+		s[0] = '\t';
+		s[1] = '\t';
+	}
+	return (s);
+}
+
+int			ft_numlen(int n)
+{
+	int	i;
+
+	i = 0;
+	while (n != 0)
+		{
+			i++;
+			n /= 10;
+		}
+	return (i);
+}
+
+char		*ft_getinfo(t_dir *info, t_stat *statbuf, char *dir)
+{
+	char			*perm;
+	char			*tmp;
+	struct passwd	*pwd;
+	struct group	*grp;
+
+	dir = ft_strjoin(ft_strjoin(dir, "/"), info->entry->d_name);
+	lstat(dir, statbuf);
+	perm = ft_strnew(1);
 	perm[0] = filetype(statbuf->st_mode);
-	tmp = perm;	
- 	perm = ft_strjoin(tmp, fileperm(statbuf->st_mode));
-	printf("%s \n", statbuf->st_uid);
+ 	perm = ft_strjoin(perm, fileperm(statbuf->st_mode));
+ 	perm = ft_strjoin(perm, " 1 ");
+	tmp = get_uid(statbuf->st_uid);
+	if (info->len < ft_strlen(tmp))
+	{
+		info->len = ft_strlen(tmp);
+		return ("inc");
+	}
+	perm = ft_strjoin(perm, tmp);
+	perm = ft_strjoin(perm, get_tabs(info, ft_strlen(tmp)));
+	tmp = get_gid(statbuf->st_gid);
+	perm = ft_strjoin(perm, tmp);
+	tmp  = ft_strjoin(ft_itoa(statbuf->st_size), " ");
+	tmp  = ft_strjoin(tmp, get_time(statbuf->st_mtime));
+	perm = ft_strjoin(perm, get_tabs(info, ft_strlen(get_gid(statbuf->st_gid))));
+	perm = ft_strjoin(perm, tmp);
 	return (perm);
 }
 
@@ -114,6 +195,7 @@ void					ft_read_curdir(char *dir, t_info *a, t_dir *info)
 {
 	t_lst	*tmp = NULL;
 	t_lst	*list = NULL;
+	char	*stmp;
 	char	*rec[255];
 	char	*s;
 	int		i;
@@ -125,17 +207,21 @@ void					ft_read_curdir(char *dir, t_info *a, t_dir *info)
 		printf("Cant open dir %s\n", dir);
 		return ;
 	}
-	
 	while ((info->entry = readdir(info->dp)) != NULL)
 		if (info->entry->d_name[0] != '.' || ft_strchr(a->arg, 'a') != NULL)
-			addentry(&list, info->entry->d_name, dir,
-				ft_getinfo(info->entry->d_name, &info->statbuf, dir, info));
+		{
+			stmp = ft_getinfo(info, &info->statbuf, dir);
+			if (ft_strcmp("inc", stmp) != 0)
+				addentry(&list, info, dir, stmp);
+			else
+				return (ft_read_curdir(dir, a, info));
+		}
 	ft_lstsort(&list, a->arg);
 	tmp = list;
 	while (tmp)
 	{
 		if (ft_strchr(a->arg, 'l') != NULL)
-			printf("%s\t", tmp->perm);
+			printf("%s ", tmp->perm);
 		puts(tmp->name);
 		s = ft_strjoin(tmp->dir, tmp->name);
 		if (ft_isdir(0, s) && tmp->name[0] != '.')
@@ -155,6 +241,8 @@ void					ft_read_curdir(char *dir, t_info *a, t_dir *info)
 			{
 				puts("");
 				printf("%s\n", rec[j]);
+				info->tabs = 1;
+				info->len = 6;
 				ft_read_curdir(rec[j], a, info);
 			}
 		}
@@ -194,6 +282,8 @@ int					main(int ac, char **av)
 				a.line = av[i];
 		}
 	}
+	dir_info.tabs = 1;
+	dir_info.len = 6;
 	ft_read_curdir(a.line, &a,  &dir_info);
 	return (0);
 }

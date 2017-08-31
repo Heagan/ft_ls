@@ -18,16 +18,20 @@ static	void	ft_lstswap(t_lst *lst, t_lst *mst)
 	const void	*tmp;
 	const void	*tmpd;
 	const void	*tmpp;
+	int			tmpt;
 
 	tmp = lst->name;
 	tmpp = lst->perm;
 	tmpd = lst->dir;
+	tmpt = lst->time;
 	lst->name = mst->name;
 	lst->dir = mst->dir;
 	lst->perm = mst->perm;
+	lst->time = mst->time;
 	mst->name = (void *)tmp;
 	mst->dir = (void *)tmpd;
 	mst->perm = (void *)tmpp;
+	mst->time = tmpt;
 }
 
 int				lstcmp_asending(t_lst *l1, t_lst *l2)
@@ -42,6 +46,12 @@ int				lstcmp_desending(t_lst *l1, t_lst *l2)
 	if (ft_strcmp(l1->name, l2->name) > 0)
 		return (0);
 	return (1);
+}
+
+int				lstcmp_time(t_lst *l1, t_lst *l2)
+{
+	//printf("%i %i\n",l1->time, l2->time);
+	return (l1->time <= l2->time);
 }
 
 void			ft_lstsort(t_lst **list, char *arg)
@@ -68,12 +78,18 @@ void			ft_lstsort(t_lst **list, char *arg)
 					b = 1;
 				}
 			}
-			else
-			if (lstcmp_desending(tmp, tmp->next))
-			{
-				ft_lstswap(tmp, tmp->next);
-				b = 1;
-			}
+			else 
+				if (lstcmp_desending(tmp, tmp->next))
+				{
+					ft_lstswap(tmp, tmp->next);
+					b = 1;
+				}
+			if (ft_strchr(arg, 't' ) != NULL)
+				if (lstcmp_time(tmp, tmp->next))
+					{
+						ft_lstswap(tmp, tmp->next);
+						b = 1;
+					}	
 			tmp = tmp->next;
 		}
 	}
