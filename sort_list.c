@@ -48,10 +48,37 @@ int				lstcmp_desending(t_lst *l1, t_lst *l2)
 	return (1);
 }
 
-int				lstcmp_time(t_lst *l1, t_lst *l2)
+int				lstcmp_time(t_lst *l1, t_lst *l2, int sign)
 {
-	//printf("%i %i\n",l1->time, l2->time);
-	return (l1->time <= l2->time);
+	if (sign)
+		return (l1->time < l2->time);
+	return (l1->time > l2->time);
+}
+
+void			ft_lsttimesort(t_lst **list, int sign)
+{
+	t_lst		*head;
+	t_lst		*tmp;
+	int			b;
+
+	head = *list;
+	if (head == NULL)
+		return ;
+	b = 1;
+	while (b)
+	{
+		b = 0;
+		tmp = head;
+		while (tmp->next)
+		{
+			if (lstcmp_time(tmp, tmp->next, sign))
+				{
+					ft_lstswap(tmp, tmp->next);
+					b = 1;
+				}
+			tmp = tmp->next;
+		}
+	}
 }
 
 void			ft_lstsort(t_lst **list, char *arg)
@@ -84,13 +111,14 @@ void			ft_lstsort(t_lst **list, char *arg)
 					ft_lstswap(tmp, tmp->next);
 					b = 1;
 				}
-			if (ft_strchr(arg, 't' ) != NULL)
-				if (lstcmp_time(tmp, tmp->next))
-					{
-						ft_lstswap(tmp, tmp->next);
-						b = 1;
-					}	
 			tmp = tmp->next;
 		}
+	}
+	if (ft_strchr(arg, 't' ) != NULL)
+	{	
+		if (ft_strchr(arg, 'r') == NULL)
+			ft_lsttimesort(list, 1);
+		else
+			ft_lsttimesort(list, 0);
 	}
 }
