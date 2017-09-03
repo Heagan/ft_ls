@@ -21,6 +21,7 @@ typedef struct		s_line_info
 {
 	char			*line;
 	char			*arg;
+	int				i;
 }					t_info;
 
 typedef struct		s_directory
@@ -31,6 +32,8 @@ typedef struct		s_directory
 	long long int	b_size;
 	int				tabs;
 	int				len;
+	char			*perm;
+	char			*tmp;
 }					t_dir;
 
 typedef struct		s_lst
@@ -54,7 +57,7 @@ typedef struct		s_read
 	int			j;	
 }					t_read;
 
-void	ft_read_curdir(char *dir, t_info *a, t_dir *info, t_read *r);
+char	*ft_read_curdir(char *dir, t_info *a);
 
 void	ft_lstsort(t_lst **list, char *arg);
 int		ft_strccmp(const char *s1, const char *s2);

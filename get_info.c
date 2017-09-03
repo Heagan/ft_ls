@@ -2,41 +2,37 @@
 
 static char        *getinfoex(t_dir *info, t_stat *statbuf, char *dir)
 {
-    char			*perm;
-	char			*tmp;
 	struct passwd	*pwd;
     struct group	*grp;
     
-	perm = ft_strjoin(perm, tmp);
-	perm = ft_strjoin(perm, get_tabs(info, ft_strlen(tmp)));
-	tmp = get_gid(statbuf->st_gid);
-	perm = ft_strjoin(perm, tmp);
-	tmp  = ft_strjoin(ft_itoa(statbuf->st_size), " ");
-	tmp  = ft_strjoin(tmp, get_time(statbuf->st_mtime));
-	perm = ft_strjoin(perm, get_tabs(info, ft_strlen(get_gid(statbuf->st_gid))));
-	perm = ft_strjoin(perm, tmp);
-	return (perm);
+	info->perm = ft_strjoin(info->perm, info->tmp);
+	info->perm = ft_strjoin(info->perm, get_tabs(info, ft_strlen(info->tmp)));
+	info->tmp = get_gid(statbuf->st_gid);
+	info->perm = ft_strjoin(info->perm, info->tmp);
+	info->tmp  = ft_strjoin(ft_itoa(statbuf->st_size), " ");
+	info->tmp  = ft_strjoin(info->tmp, get_time(statbuf->st_mtime));
+	info->perm = ft_strjoin(info->perm, get_tabs(info, ft_strlen(get_gid(statbuf->st_gid))));
+	info->perm = ft_strjoin(info->perm, info->tmp);
+	return (info->perm);
 }
 
 char                *ft_getinfo(t_dir *info, t_stat *statbuf, char *dir)
 {
-	char			*perm;
-	char			*tmp;
 	struct passwd	*pwd;
 	struct group	*grp;
 
 	dir = ft_strjoin(ft_strjoin(dir, "/"), info->entry->d_name);
 	lstat(dir, statbuf);
-	perm = ft_strnew(1);
-	perm[0] = filetype(statbuf->st_mode);
- 	perm = ft_strjoin(perm, fileperm(statbuf->st_mode));
-	perm = ft_strjoin(perm, " ");
-	perm = ft_strjoin(perm, ft_itoa(statbuf->st_nlink));
- 	perm = ft_strjoin(perm, " ");
-	tmp = get_uid(statbuf->st_uid);
-	if (info->len < ft_strlen(tmp))
+	info->perm = ft_strnew(1);
+	info->perm[0] = filetype(statbuf->st_mode);
+ 	info->perm = ft_strjoin(info->perm, fileperm(statbuf->st_mode));
+	info->perm = ft_strjoin(info->perm, " ");
+	info->perm = ft_strjoin(info->perm, ft_itoa(statbuf->st_nlink));
+ 	info->perm = ft_strjoin(info->perm, " ");
+	info->tmp = get_uid(statbuf->st_uid);
+	if (info->len < ft_strlen(info->tmp))
 	{
-		info->len = ft_strlen(tmp);
+		info->len = ft_strlen(info->tmp);
 		return ("inc");
     }
     return (getinfoex(info, statbuf, dir));
