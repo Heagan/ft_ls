@@ -6,15 +6,15 @@
 /*   By: gsferopo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/09 16:57:58 by gsferopo          #+#    #+#             */
-/*   Updated: 2017/08/30 09:54:40 by gsferopo         ###   ########.fr       */
+/*   Updated: 2017/09/04 08:20:34 by gsferopo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int		ft_strccmp(char *s1, char *s2)
+int			ft_strccmp(char *s1, char *s2)
 {
-	int	i;
+	int		i;
 	char	*ls1;
 	char	*ls2;
 

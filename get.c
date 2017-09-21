@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gsferopo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/09/04 07:58:41 by gsferopo          #+#    #+#             */
+/*   Updated: 2017/09/04 08:02:42 by gsferopo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lslib.h"
 
-char					*getcode(char n)
+char				*getcode(char n)
 {
-	char	*s;
+	char			*s;
 
 	s = (char *)malloc(4);
 	s[3] = '\0';
@@ -19,7 +31,7 @@ char					*getcode(char n)
 		s[2] = 'x';
 	else
 		s[2] = '-';
-	return (s);			
+	return (s);
 }
 
 char				*get_uid(int uid)
@@ -27,19 +39,19 @@ char				*get_uid(int uid)
 	struct passwd	*pwd;
 
 	if ((pwd = getpwuid(uid)) != NULL)
-        return(pwd->pw_name);
-    else
-        return(ft_itoa(uid));
+		return (pwd->pw_name);
+	else
+		return (ft_itoa(uid));
 }
 
 char				*get_gid(int gid)
 {
-	struct group   *grp;
+	struct group	*grp;
 
 	if ((grp = getgrgid(gid)) != NULL)
-    	return (grp->gr_name);
-    else
-    	return (NULL);
+		return (grp->gr_name);
+	else
+		return (NULL);
 }
 
 char				*get_time(time_t rawtime)
@@ -47,16 +59,15 @@ char				*get_time(time_t rawtime)
 	char			*rtime;
 
 	rtime = ctime(&rawtime);
-
 	rtime = ft_strdup(rtime + 4);
 	rtime[ft_strlen(rtime) - 9] = '\0';
 	return (ft_strdup(rtime));
 }
 
-char		*get_tabs(t_dir *info, int len)
+char				*get_tabs(t_dir *info, int len)
 {
-	int		i;
-	char	*s;
+	int				i;
+	char			*s;
 
 	s = ft_strnew(1);
 	s[0] = ' ';

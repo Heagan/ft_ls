@@ -1,17 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sort_list.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gsferopo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/09/04 08:10:15 by gsferopo          #+#    #+#             */
+/*   Updated: 2017/09/04 08:34:32 by gsferopo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lslib.h"
-
-const size_t	ft_lstsize(const t_lst *lst)
-{
-	size_t	size;
-
-	size = 0;
-	while (lst)
-	{
-		lst = lst->next;
-		size++;
-	}
-	return (size);
-}
 
 static	void	ft_lstswap(t_lst *lst, t_lst *mst)
 {
@@ -34,27 +33,6 @@ static	void	ft_lstswap(t_lst *lst, t_lst *mst)
 	mst->time = tmpt;
 }
 
-int				lstcmp_asending(t_lst *l1, t_lst *l2)
-{
-	if (ft_strcmp(l1->name, l2->name) < 0)
-		return (0);
-	return (1);
-}
-
-int				lstcmp_desending(t_lst *l1, t_lst *l2)
-{
-	if (ft_strcmp(l1->name, l2->name) > 0)
-		return (0);
-	return (1);
-}
-
-int				lstcmp_time(t_lst *l1, t_lst *l2, int sign)
-{
-	if (sign)
-		return (l1->time < l2->time);
-	return (l1->time > l2->time);
-}
-
 void			ft_lsttimesort(t_lst **list, int sign)
 {
 	t_lst		*head;
@@ -72,13 +50,45 @@ void			ft_lsttimesort(t_lst **list, int sign)
 		while (tmp->next)
 		{
 			if (lstcmp_time(tmp, tmp->next, sign))
-				{
-					ft_lstswap(tmp, tmp->next);
-					b = 1;
-				}
+			{
+				ft_lstswap(tmp, tmp->next);
+				b = 1;
+			}
 			tmp = tmp->next;
 		}
 	}
+}
+
+static void		lst_timer(t_lst **list, char *arg)
+{
+	if (ft_strchr(arg, 't') != NULL)
+	{
+		if (ft_strchr(arg, 'r') == NULL)
+			ft_lsttimesort(list, 1);
+		else
+			ft_lsttimesort(list, 0);
+	}
+}
+
+static int		lst_reverse(t_lst *tmp, char *arg)
+{
+	int b;
+
+	b = 0;
+	if (ft_strchr(arg, 'r') == NULL)
+	{
+		if (lstcmp_asending(tmp, tmp->next))
+		{
+			ft_lstswap(tmp, tmp->next);
+			b = 1;
+		}
+	}
+	else if (lstcmp_desending(tmp, tmp->next))
+	{
+		ft_lstswap(tmp, tmp->next);
+		b = 1;
+	}
+	return (b);
 }
 
 void			ft_lstsort(t_lst **list, char *arg)
@@ -86,7 +96,7 @@ void			ft_lstsort(t_lst **list, char *arg)
 	t_lst		*head;
 	t_lst		*tmp;
 	int			b;
-	
+
 	head = *list;
 	if (head == NULL)
 		return ;
@@ -97,28 +107,9 @@ void			ft_lstsort(t_lst **list, char *arg)
 		tmp = head;
 		while (tmp->next)
 		{
-			if (ft_strchr(arg, 'r') == NULL)
-			{
-				if (lstcmp_asending(tmp, tmp->next))
-				{
-					ft_lstswap(tmp, tmp->next);
-					b = 1;
-				}
-			}
-			else 
-				if (lstcmp_desending(tmp, tmp->next))
-				{
-					ft_lstswap(tmp, tmp->next);
-					b = 1;
-				}
+			b += lst_reverse(tmp, arg);
 			tmp = tmp->next;
 		}
 	}
-	if (ft_strchr(arg, 't' ) != NULL)
-	{	
-		if (ft_strchr(arg, 'r') == NULL)
-			ft_lsttimesort(list, 1);
-		else
-			ft_lsttimesort(list, 0);
-	}
+	lst_timer(list, arg);
 }

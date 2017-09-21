@@ -12,7 +12,6 @@ void	ft_printf(int num, ...)
 		next = va_arg(arg, char *);
 		ft_putstr(next);
 		num--;
-	}	
-	ft_putchar('\n');
+	}
 	va_end(arg);
 }

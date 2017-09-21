@@ -29,6 +29,8 @@ typedef struct		s_list
 
 void				ft_printf(int num, ...);
 char				*ft_itoa_base(int value, int base);
+int					ft_strccmp(char *s1, char *s2);
+int					ft_numlen(int n);
 
 char				*ft_hex(int n);
 int					ft_clamp(int min, int max, int n);
